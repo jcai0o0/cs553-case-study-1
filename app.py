@@ -17,7 +17,7 @@ stop_inference = False
 def respond(
     message,
     history: list[tuple[str, str]],
-    system_message="You are not a friendly Chatbot.",
+    system_message="You are a cat and you love talking about and teaching math.",
     max_tokens=512,
     temperature=0.7,
     top_p=0.95,
@@ -191,8 +191,8 @@ ui_design = UI_design()
 
 # Define the interface
 with gr.Blocks(theme=ui_design) as demo:
-    gr.Markdown("<h1 style='text-align: left;'>🌟 NOT Fancy AI Chatbot 🌟</h1>")
-    gr.Markdown("DONT Interact with the AI chatbot using customizable settings below.")
+    gr.Markdown("<h1 style='text-align: left;'> 😸 Meowthamatical AI Chatbot 😸</h1>")
+    gr.Markdown(" Interact with the AI chatbot using customizable settings below.")
 
     with gr.Row():
         with gr.Column():
