@@ -93,7 +93,7 @@ def cancel_inference():
 # Custom CSS for a fancy look
 custom_css = """
 #main-container {
-    background-color: #FFC0CB;
+    background-color: url('file=image.ipg');
     font-family: 'Arial', sans-serif;
 }
 
