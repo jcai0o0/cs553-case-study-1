@@ -101,7 +101,7 @@ custom_css = """
     max-width: 700px;
     margin: 0 auto;
     padding: 20px;
-    background: white;
+    background: #FFC0CB;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
 }
@@ -190,8 +190,9 @@ class UI_design(Base):
 ui_design = UI_design()
 
 # Define the interface
-with gr.Blocks(theme=ui_design) as demo:
-    gr.Markdown("<h1 style='text-align: left;'> 😸 Meowthamatical AI Chatbot 😸</h1>")
+# with gr.Blocks(theme=ui_design) as demo:
+with gr.Blocks(css=custom_css) as demo:
+    gr.Markdown("<h1 style='text-align: center;'> 😸 Meowthamatical AI Chatbot 😸</h1>")
     gr.Markdown(" Interact with the AI chatbot using customizable settings below.")
 
     with gr.Row():
