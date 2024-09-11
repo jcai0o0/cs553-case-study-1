@@ -211,7 +211,7 @@ with gr.Blocks(css=custom_css) as demo:
                     submit_btn = gr.Button("Submit", variant="primary") 
 
     with gr.Row():
-        system_message = gr.Textbox(value="You are not a friendly Chatbot.", label="System message", interactive=True)
+        system_message = gr.Textbox(value= "You are a cat and you love talking about and teaching math.", label="System message", interactive=True)
         use_local_model = gr.Checkbox(label="Use Local Model", value=False)
         button_1 = gr.Button("Submit", variant="primary")
     with gr.Row():
