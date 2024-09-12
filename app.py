@@ -197,30 +197,21 @@ with gr.Blocks(css=custom_css) as demo:
     use_local_model = gr.Checkbox(label="Use Local Model", value=False)
 
     with gr.Row():
-        with gr.Column():
-            with gr.Tabs() as input_tabs:
-                with gr.Tab("Sketch"):
-                    input_sketchpad = gr.Sketchpad(type="pil", label="Sketch", layers=False)
-            
-            input_text = gr.Textbox(label="input your question")
+        system_message = gr.Textbox(value="You are a cat and you love talking about and teaching math.",
+                                    label="System message",
+                                    interactive=True)
+        use_local_model = gr.Checkbox(label="Use Local Model", value=False)
 
-            with gr.Row():
-                with gr.Column():
-                    clear_btn = gr.ClearButton(
-                        [input_sketchpad, input_text])
-                with gr.Column():
-                    submit_btn = gr.Button("Submit", variant="primary")
-        with gr.Column():
-            chat_history = gr.Chatbot(label="Chat")
+    chat_history = gr.Chatbot(label="Chat")
 
-            user_input = gr.Textbox(show_label=False, placeholder="Type your message here...")
+    user_input = gr.Textbox(show_label=False, placeholder="Type your message here...")
 
-            # cancel_button = gr.Button("Cancel Inference", variant="danger")
+    cancel_button = gr.Button("Cancel Inference", variant="danger")
 
     # Adjusted to ensure history is maintained and passed correctly
     user_input.submit(respond, [user_input, chat_history, use_local_model], chat_history)
 
-    # cancel_button.click(cancel_inference)
+    cancel_button.click(cancel_inference)
 
 if __name__ == "__main__":
     demo.launch(share=False)  # Remove share=True because it's not supported on HF Spaces
