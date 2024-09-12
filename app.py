@@ -195,25 +195,25 @@ with gr.Blocks(css=custom_css) as demo:
     gr.Markdown("<h1 style='text-align: center;'> 😸 Meowthamatical AI Chatbot 😸</h1>")
     gr.Markdown(" Interact with the AI chatbot using customizable settings below.")
 
-    with gr.Row():
-        with gr.Column():
-            with gr.Tabs() as input_tabs:
-                with gr.Tab("Sketch"):
-                    input_sketchpad = gr.Sketchpad(type="pil", label="Sketch", layers=False)
-            
-            input_text = gr.Textbox(label="input your question")
+    # with gr.Row():
+    #     with gr.Column():
+    #         with gr.Tabs() as input_tabs:
+    #             with gr.Tab("Sketch"):
+    #                 input_sketchpad = gr.Sketchpad(type="pil", label="Sketch", layers=False)
+    #
+    #         input_text = gr.Textbox(label="input your question")
+    #
+    #         with gr.Row():
+    #             # with gr.Column():
+    #             #     clear_btn = gr.ClearButton(
+    #             #         [input_sketchpad, input_text])
+    #             with gr.Column():
+    #                 submit_btn = gr.Button("Submit", variant="primary")
 
-            with gr.Row():
-                # with gr.Column():
-                #     clear_btn = gr.ClearButton(
-                #         [input_sketchpad, input_text])
-                with gr.Column():
-                    submit_btn = gr.Button("Submit", variant="primary") 
-
     with gr.Row():
-        system_message = gr.Textbox(value="You are not a friendly Chatbot.", label="System message", interactive=True)
+        system_message = gr.Textbox(value="You are a cat and you love talking about and teaching math.", label="System message", interactive=True)
         use_local_model = gr.Checkbox(label="Use Local Model", value=False)
-        button_1 = gr.Button("Submit", variant="primary")
+        # button_1 = gr.Button("Submit", variant="primary")
     with gr.Row():
         max_tokens = gr.Slider(minimum=1, maximum=2048, value=512, step=1, label="Max new tokens")
         temperature = gr.Slider(minimum=0.1, maximum=4.0, value=0.7, step=0.1, label="Temperature")
