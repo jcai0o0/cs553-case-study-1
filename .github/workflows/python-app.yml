@@ -1,0 +1,24 @@
+name: Python package
+
+on: [push]
+
+jobs:
+    build:
+
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+            - name: Set up Python
+              uses: actions/setup-python@v5
+              with:
+                python-version: '3.x'
+            - name: Install dependencies
+              run: |
+                python -m venv pyenv
+                pyenv/bin/python -m pip install --upgrade pip
+                pyenv/bin/pip install -r requirements.txt
+            - name: Test with pytest
+              run: |
+                pyenv/bin/pip install pytest pytest-cov
+                pyenv/bin/python -m pytest test_app.py --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
