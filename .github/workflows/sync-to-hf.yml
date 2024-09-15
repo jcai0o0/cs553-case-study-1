@@ -19,5 +19,5 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           HF_USERNAME: jcai
           HF_ORGNAME: CS553-Group5
-          SPACE_NAME: CS553_Example
+          SPACE_NAME: meowthamatical-chatbot
         run: git push https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_ORGNAME/$SPACE_NAME main
