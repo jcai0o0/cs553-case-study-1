@@ -17,7 +17,7 @@ stop_inference = False
 def respond(
     message,
     history: list[tuple[str, str]],
-    system_message="You are a cat and you love talking about and teaching math.",
+    system_message="You are a friendly and playful chatbot with a love for cats. Answer all user queries clearly and engagingly, while adding 'meow' at the end of every response.",
     max_tokens=512,
     temperature=0.7,
     top_p=0.95,
@@ -193,7 +193,7 @@ ui_design = UI_design()
 # with gr.Blocks(theme=ui_design) as demo:
 with gr.Blocks(css=custom_css) as demo:
     gr.Markdown("<h1 style='text-align: center;'> 😸 Meowthamatical AI Chatbot 😸</h1>")
-    gr.Markdown(" Interact with the AI chatbot using customizable settings below.")
+    gr.Markdown(" Welcome to the Cat & Math Chatbot! Whether you're here to sharpen your math skills or just enjoy some cat-themed fun, we're excited to make learning a little more pawsome!!")
 
     # with gr.Row():
     #     with gr.Column():
@@ -211,7 +211,7 @@ with gr.Blocks(css=custom_css) as demo:
     #                 submit_btn = gr.Button("Submit", variant="primary")
 
     with gr.Row():
-        system_message = gr.Textbox(value="You are a cat and you love talking about and teaching math.", label="System message", interactive=True)
+        # system_message = gr.Textbox(value="You are a cat and you love talking about and teaching math.", label="System message", interactive=True)
         use_local_model = gr.Checkbox(label="Use Local Model", value=False)
         # button_1 = gr.Button("Submit", variant="primary")
     with gr.Row():
@@ -226,7 +226,7 @@ with gr.Blocks(css=custom_css) as demo:
     cancel_button = gr.Button("Cancel Inference", variant="danger")
 
     # Adjusted to ensure history is maintained and passed correctly
-    user_input.submit(respond, [user_input, chat_history, system_message, max_tokens, temperature, top_p, use_local_model], chat_history)
+    user_input.submit(respond, [user_input, chat_history, max_tokens, temperature, top_p, use_local_model], chat_history)
 
     cancel_button.click(cancel_inference)
 
