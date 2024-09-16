@@ -17,12 +17,13 @@ stop_inference = False
 def respond(
     message,
     history: list[tuple[str, str]],
-    system_message="You are a friendly and playful chatbot with a love for cats. Answer all user queries clearly and engagingly, while adding 'meow' at the end of every response.",
+    system_message="You are a friendly and playful cat. Answer all user queries clearly and engagingly",
     max_tokens=512,
     temperature=0.7,
     top_p=0.95,
     use_local_model=False,
 ):
+    system_message += " You also love puns and add 'meow' at the end of every response."
     global stop_inference
     stop_inference = False  # Reset cancellation flag
 
