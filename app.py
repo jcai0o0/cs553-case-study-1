@@ -8,7 +8,7 @@ from gradio.themes.base import Base
 from gradio.themes.utils import colors, fonts, sizes
 
 # Inference client setup
-client = InferenceClient("HuggingFaceH4/zephyr-7b-alpha")
+client = InferenceClient("HuggingFaceH4/zephyr-7b-beta")
 pipe = pipeline("text-generation", "microsoft/Phi-3-mini-4k-instruct", torch_dtype=torch.bfloat16, device_map="auto")
 
 # Global flag to handle cancellation
@@ -211,7 +211,7 @@ with gr.Blocks(css=custom_css) as demo:
     #                 submit_btn = gr.Button("Submit", variant="primary")
 
     with gr.Row():
-        # system_message = gr.Textbox(value="You are a cat and you love talking about and teaching math.", label="System message", interactive=True)
+        system_message = gr.Textbox(value="You are a friendly and playful chatbot with a love for cats. Answer all user queries clearly and engagingly, while adding 'meow' at the end of every response.", label="System message", interactive=True)
         use_local_model = gr.Checkbox(label="Use Local Model", value=False)
         # button_1 = gr.Button("Submit", variant="primary")
     with gr.Row():
@@ -226,7 +226,7 @@ with gr.Blocks(css=custom_css) as demo:
     cancel_button = gr.Button("Cancel Inference", variant="danger")
 
     # Adjusted to ensure history is maintained and passed correctly
-    user_input.submit(respond, [user_input, chat_history, max_tokens, temperature, top_p, use_local_model], chat_history)
+    user_input.submit(respond, [user_input, chat_history, system_message, max_tokens, temperature, top_p, use_local_model], chat_history)
 
     cancel_button.click(cancel_inference)
 
