@@ -228,10 +228,10 @@ with gr.Blocks(css=custom_css) as demo:
     cancel_button = gr.Button("Cancel Inference", variant="danger")
 
     # Adjusted to ensure history is maintained and passed correctly
-    max_tokens = 512
-    temperature = 0.8
-    top_p = 0.95
-    user_input.submit(respond, [user_input, chat_history, system_message, max_tokens, temperature, top_p, use_local_model], chat_history)
+    # user_input.submit(respond, [user_input, chat_history, system_message, max_tokens, temperature, top_p, use_local_model], chat_history)
+    user_input.submit(respond,
+                      [user_input, chat_history, system_message, 512, 0.8, 0.95, use_local_model],
+                      chat_history)
 
     cancel_button.click(cancel_inference)
 
