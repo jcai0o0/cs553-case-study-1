@@ -1,0 +1,48 @@
+#! /bin/bash
+
+PORT=21003
+MACHINE=paffenroth-23.dyn.wpi.edu
+STUDENT_ADMIN_KEY_PATH=kfkey
+
+#insert key into list of authorized keys
+cat kfkey.pub > authorized_keys
+
+#set permissions
+chmod 600 authorized_keys
+
+#remove default key
+rm -f student-admin_key*
+
+# Copy the authorized_keys file to the server
+scp -i student-admin_key -P ${PORT} -o StrictHostKeyChecking=no authorized_keys student-admin@${MACHINE}:~/.ssh/
+
+# Add the key to the ssh-agent
+eval "$(ssh-agent -s)"
+ssh-add mykey
+
+# Check the key file on the server
+echo "checking that the authorized_keys file is correct"
+ssh -p ${PORT} -o StrictHostKeyChecking=no student-admin@${MACHINE} "cat ~/.ssh/authorized_keys"
+
+# clone the repo
+git clone https://github.com/rcpaffenroth/CS553_example
+
+# Copy the files to the server
+scp -P ${PORT} -o StrictHostKeyChecking=no -r CS553_example student-admin@${MACHINE}:~/
+
+# check that the code in installed and start up the product
+# COMMAND="ssh -p ${PORT} -o StrictHostKeyChecking=no student-admin@${MACHINE}"
+
+# ${COMMAND} "ls CS553_example"
+# ${COMMAND} "sudo apt install -qq -y python3-venv"
+# ${COMMAND} "cd CS553_example && python3 -m venv venv"
+# ${COMMAND} "cd CS553_example && source venv/bin/activate && pip install -r requirements.txt"
+# ${COMMAND} "nohup CS553_example/venv/bin/python3 CS553_example/app.py > log.txt 2>&1 &"
+
+# nohup ./whatever > /dev/null 2>&1 
+
+# debugging ideas
+# sudo apt-get install gh
+# gh auth login
+# requests.exceptions.HTTPError: 429 Client Error: Too Many Requests for url: https://api-inference.huggingface.co/models/HuggingFaceH4/zephyr-7b-beta/v1/chat/completions
+# log.txt
