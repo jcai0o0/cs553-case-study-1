@@ -15,7 +15,7 @@ HF_ACCESS = os.getenv("HF_ACCESS")
 
 # Inference client setup
 client = InferenceClient(model="mistralai/Mistral-Small-Instruct-2409",
-                         # api_key=HF_ACCESS
+                         token=HF_ACCESS
                          )
 pipe = pipeline("text-generation", "microsoft/Phi-3-mini-4k-instruct", torch_dtype=torch.bfloat16, device_map="auto")
 
