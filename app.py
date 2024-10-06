@@ -7,15 +7,15 @@ from typing import Iterable
 from gradio.themes.base import Base
 from gradio.themes.utils import colors, fonts, sizes
 
-import os
-from dotenv import load_dotenv
-load_dotenv()
-
-HF_ACCESS = os.getenv("HF_ACCESS")
+# import os
+# from dotenv import load_dotenv
+# load_dotenv()
+#
+# HF_ACCESS = os.getenv("HF_ACCESS")
 
 # Inference client setup
 client = InferenceClient(model="mistralai/Mistral-Small-Instruct-2409",
-                         token=HF_ACCESS
+                         # token=HF_ACCESS
                          )
 pipe = pipeline("text-generation", "microsoft/Phi-3-mini-4k-instruct", torch_dtype=torch.bfloat16, device_map="auto")
 
