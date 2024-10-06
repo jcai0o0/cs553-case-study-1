@@ -10,7 +10,7 @@ import subprocess
 load_dotenv()
 
 # Settings
-VM_IP = "paffenroth-23.dyn.wpi.edu"
+VM_IP = os.getenv("MACHINE")
 GRADIO_UI_URL = "http://paffenroth-23.dyn.wpi.edu:8005/"
 CHECK_INTERVAL = 60   # 60 seconds
 RECOVERY_SCRIPT_PATH = 'automated_deployment.sh'
@@ -55,7 +55,7 @@ def check_ui_status():
             print(f"UI returned status code {response.status_code}")
             return False
     except requests.ConnectionError:
-        print("Failed to connect to UI.")
+        print(f"{time.ctime()} ---- Failed to connect to UI.")
         return False
 
 

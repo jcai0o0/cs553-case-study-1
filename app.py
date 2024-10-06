@@ -8,7 +8,7 @@ from gradio.themes.base import Base
 from gradio.themes.utils import colors, fonts, sizes
 
 # Inference client setup
-client = InferenceClient("HuggingFaceH4/zephyr-7b-alpha")
+client = InferenceClient("meta-llama/Llama-2-7b-chat-hf")
 pipe = pipeline("text-generation", "microsoft/Phi-3-mini-4k-instruct", torch_dtype=torch.bfloat16, device_map="auto")
 
 # Global flag to handle cancellation
