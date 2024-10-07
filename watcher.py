@@ -13,7 +13,7 @@ load_dotenv()
 VM_IP = os.getenv("MACHINE")
 GRADIO_UI_URL = "http://paffenroth-23.dyn.wpi.edu:8005/"
 CHECK_INTERVAL = 60   # 60 seconds
-RECOVERY_SCRIPT_PATH = 'automated_deployment.sh'
+RECOVERY_SCRIPT_PATH = 'recovery-deployment.sh'
 
 
 # Email settings (if EMAIL_ALERT is True)
