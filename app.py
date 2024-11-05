@@ -2,10 +2,17 @@ import gradio as gr
 from huggingface_hub import InferenceClient
 import torch
 from transformers import pipeline
+from prometheus_client import start_http_server, Counter, Summary
 
 from typing import Iterable
 from gradio.themes.base import Base
 from gradio.themes.utils import colors, fonts, sizes
+
+# Prometheus metrics
+REQUEST_COUNTER = Counter('app_requests_total', 'Total number of requests')
+SUCCESSFUL_REQUESTS = Counter('app_successful_requests_total', 'Total number of successful requests')
+FAILED_REQUESTS = Counter('app_failed_requests_total', 'Total number of failed requests')
+REQUEST_DURATION = Summary('app_request_duration_seconds', 'Time spent processing request')
 
 # import os
 # from dotenv import load_dotenv
@@ -34,65 +41,74 @@ def respond(
     system_message += " You also love puns and add 'meow' at the end of every response."
     global stop_inference
     stop_inference = False  # Reset cancellation flag
+    REQUEST_COUNTER.inc()  # Increment request counter
+    request_timer = REQUEST_DURATION.time()  # Start timing the request
 
-    # Initialize history if it's None
-    if history is None:
-        history = []
+    try:
+        # Initialize history if it's None
+        if history is None:
+            history = []
 
-    if use_local_model:
-        # local inference 
-        messages = [{"role": "system", "content": system_message}]
-        for val in history:
-            if val[0]:
-                messages.append({"role": "user", "content": val[0]})
-            if val[1]:
-                messages.append({"role": "assistant", "content": val[1]})
-        messages.append({"role": "user", "content": message})
+        if use_local_model:
+            # local inference
+            messages = [{"role": "system", "content": system_message}]
+            for val in history:
+                if val[0]:
+                    messages.append({"role": "user", "content": val[0]})
+                if val[1]:
+                    messages.append({"role": "assistant", "content": val[1]})
+            messages.append({"role": "user", "content": message})
 
-        response = ""
-        for output in pipe(
-            messages,
-            max_new_tokens=max_tokens,
-            temperature=temperature,
-            do_sample=True,
-            top_p=top_p,
-        ):
-            if stop_inference:
-                response = "Inference cancelled."
-                yield history + [(message, response)]
-                return
-            token = output['generated_text'][-1]['content']
-            response += token
-            yield history + [(message, response)]  # Yield history + new response
+            response = ""
+            for output in pipe(
+                messages,
+                max_new_tokens=max_tokens,
+                temperature=temperature,
+                do_sample=True,
+                top_p=top_p,
+            ):
+                if stop_inference:
+                    response = "Inference cancelled."
+                    yield history + [(message, response)]
+                    return
+                token = output['generated_text'][-1]['content']
+                response += token
+                yield history + [(message, response)]  # Yield history + new response
 
-    else:
-        # API-based inference 
-        messages = [{"role": "system", "content": system_message}]
-        for val in history:
-            if val[0]:
-                messages.append({"role": "user", "content": val[0]})
-            if val[1]:
-                messages.append({"role": "assistant", "content": val[1]})
-        messages.append({"role": "user", "content": message})
+        else:
+            # API-based inference
+            messages = [{"role": "system", "content": system_message}]
+            for val in history:
+                if val[0]:
+                    messages.append({"role": "user", "content": val[0]})
+                if val[1]:
+                    messages.append({"role": "assistant", "content": val[1]})
+            messages.append({"role": "user", "content": message})
 
-        response = ""
-        for message_chunk in client.chat_completion(
-            messages,
-            max_tokens=max_tokens,
-            stream=True,
-            temperature=temperature,
-            top_p=top_p,
-        ):
-            if stop_inference:
-                response = "Inference cancelled."
-                yield history + [(message, response)]
-                return
-            if stop_inference:
-                response = "Inference cancelled."
-                break
-            token = message_chunk.choices[0].delta.content
-            response += token
-            yield history + [(message, response)]  # Yield history + new response
+            response = ""
+            for message_chunk in client.chat_completion(
+                messages,
+                max_tokens=max_tokens,
+                stream=False,
+                temperature=temperature,
+                top_p=top_p,
+            ):
+                if stop_inference:
+                    response = "Inference cancelled."
+                    yield history + [(message, response)]
+                    return
+                if stop_inference:
+                    response = "Inference cancelled."
+                    break
+                token = message_chunk.choices[0].delta.content
+                response += token
+                yield history + [(message, response)]  # Yield history + new response
+        SUCCESSFUL_REQUESTS.inc()  # Increment successful request counter
+    except Exception as e:
+        FAILED_REQUESTS.inc()  # Increment failed request counter
+        yield history + [(message, f"Error: {str(e)}")]
+    finally:
+        request_timer.observe_duration()  # Stop timing the request
 
 
 def cancel_inference():
@@ -244,5 +260,6 @@ with gr.Blocks(css=custom_css) as demo:
     cancel_button.click(cancel_inference)
 
 if __name__ == "__main__":
+    start_http_server(8000)  # Expose metrics on port 8000
     demo.launch(share=False)  # Remove share=True because it's not supported on HF Spaces
 
