@@ -5,3 +5,4 @@ torch==2.4.*
 transformers==4.43.*
 accelerate==0.33.*
 python-dotenv==1.0.1
+prometheus_client==0.21.*
