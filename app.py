@@ -211,8 +211,7 @@ with gr.Blocks(css=custom_css) as demo:
 
     with gr.Row():
         system_message = gr.Textbox(value="You are a friendly and playful cat who loves help users learn math.", label="System message", interactive=True)
-        # use_local_model = gr.Checkbox(label="Use Local Model", value=False)
-        use_local_model = False
+        use_local_model = gr.Checkbox(label="Use Local Model", value=False)
         # button_1 = gr.Button("Submit", variant="primary")
     with gr.Row():
         max_tokens = gr.Slider(minimum=1, maximum=2048, value=512, step=1, label="Max new tokens")
