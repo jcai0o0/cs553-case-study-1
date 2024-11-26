@@ -1,7 +1,7 @@
 import gradio as gr
 from huggingface_hub import InferenceClient
-import torch
-from transformers import pipeline
+# import torch
+# from transformers import pipeline
 from prometheus_client import start_http_server, Counter, Summary
 
 from typing import Iterable
@@ -24,7 +24,7 @@ REQUEST_DURATION = Summary('app_request_duration_seconds', 'Time spent processin
 client = InferenceClient(model="mistralai/Mistral-Small-Instruct-2409",
                          # token=HF_ACCESS
                          )
-pipe = pipeline("text-generation", "microsoft/Phi-3-mini-4k-instruct", torch_dtype=torch.bfloat16, device_map="auto")
+# pipe = pipeline("text-generation", "microsoft/Phi-3-mini-4k-instruct", torch_dtype=torch.bfloat16, device_map="auto")
 
 # Global flag to handle cancellation
 stop_inference = False
@@ -49,60 +49,33 @@ def respond(
         if history is None:
             history = []
 
-        if use_local_model:
-            # local inference
-            messages = [{"role": "system", "content": system_message}]
-            for val in history:
-                if val[0]:
-                    messages.append({"role": "user", "content": val[0]})
-                if val[1]:
-                    messages.append({"role": "assistant", "content": val[1]})
-            messages.append({"role": "user", "content": message})
+        # API-based inference
+        messages = [{"role": "system", "content": system_message}]
+        for val in history:
+            if val[0]:
+                messages.append({"role": "user", "content": val[0]})
+            if val[1]:
+                messages.append({"role": "assistant", "content": val[1]})
+        messages.append({"role": "user", "content": message})
 
-            response = ""
-            for output in pipe(
-                messages,
-                max_new_tokens=max_tokens,
-                temperature=temperature,
-                do_sample=True,
-                top_p=top_p,
-            ):
-                if stop_inference:
-                    response = "Inference cancelled."
-                    yield history + [(message, response)]
-                    return
-                token = output['generated_text'][-1]['content']
-                response += token
-                yield history + [(message, response)]  # Yield history + new response
-
-        else:
-            # API-based inference
-            messages = [{"role": "system", "content": system_message}]
-            for val in history:
-                if val[0]:
-                    messages.append({"role": "user", "content": val[0]})
-                if val[1]:
-                    messages.append({"role": "assistant", "content": val[1]})
-            messages.append({"role": "user", "content": message})
-
-            response = ""
-            for message_chunk in client.chat_completion(
-                messages,
-                max_tokens=max_tokens,
-                stream=False,
-                temperature=temperature,
-                top_p=top_p,
-            ):
-                if stop_inference:
-                    response = "Inference cancelled."
-                    yield history + [(message, response)]
-                    return
-                if stop_inference:
-                    response = "Inference cancelled."
-                    break
-                token = message_chunk.choices[0].delta.content
-                response += token
-                yield history + [(message, response)]  # Yield history + new response
+        response = ""
+        for message_chunk in client.chat_completion(
+            messages,
+            max_tokens=max_tokens,
+            stream=False,
+            temperature=temperature,
+            top_p=top_p,
+        ):
+            if stop_inference:
+                response = "Inference cancelled."
+                yield history + [(message, response)]
+                return
+            if stop_inference:
+                response = "Inference cancelled."
+                break
+            token = message_chunk.choices[0].delta.content
+            response += token
+            yield history + [(message, response)]  # Yield history + new response
         SUCCESSFUL_REQUESTS.inc()  # Increment successful request counter
     except Exception as e:
         FAILED_REQUESTS.inc()  # Increment failed request counter
@@ -238,7 +211,8 @@ with gr.Blocks(css=custom_css) as demo:
 
     with gr.Row():
         system_message = gr.Textbox(value="You are a friendly and playful cat who loves help users learn math.", label="System message", interactive=True)
-        use_local_model = gr.Checkbox(label="Use Local Model", value=False)
+        # use_local_model = gr.Checkbox(label="Use Local Model", value=False)
+        use_local_model = False
         # button_1 = gr.Button("Submit", variant="primary")
     with gr.Row():
         max_tokens = gr.Slider(minimum=1, maximum=2048, value=512, step=1, label="Max new tokens")
